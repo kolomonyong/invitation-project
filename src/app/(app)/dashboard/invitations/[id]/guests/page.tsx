@@ -12,13 +12,8 @@ type InvitationWithTemplate = {
     name: string;
   } | null;
 };
-// --- ^^^ NEW TYPE DEFINITION ^^^ ---
 
-type GuestListPageProps = {
-  params: { id: string };
-};
-
-export default async function GuestListPage({ params }: GuestListPageProps) {
+export default async function GuestListPage({ params }: { params: { id: string } }) {
   const supabase = createServerClient();
 
   const { data: { user } } = await supabase.auth.getUser();
@@ -60,7 +55,7 @@ export default async function GuestListPage({ params }: GuestListPageProps) {
       </Link>
       
       {/* This line will now work without any errors */}
-      <h1 className="text-3xl font-bold">Guest List for "{invitation.templates?.name}"</h1>
+      <h1 className="text-3xl font-bold">Guest List for &ldquo;{invitation.templates?.name}&rdquo;</h1>
       
       <div className="my-6 grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-green-100 p-4 rounded-lg shadow">
