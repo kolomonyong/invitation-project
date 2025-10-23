@@ -12,7 +12,12 @@ import NetflixTemplate from '@/components/templates/NetflixTemplate';
 
 export const dynamic = 'force-dynamic';
 
-export default async function InvitePage({ params }: { params: { id: string } }) {
+type PageProps = {
+  params: { id: string };
+  searchParams: Record<string, string | string[] | undefined>;
+};
+
+export default async function InvitePage({ params }: PageProps) {
   const supabase = createServerClient();
 
   const { data: invitationData } = await supabase

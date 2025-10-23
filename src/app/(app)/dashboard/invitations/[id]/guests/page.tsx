@@ -13,7 +13,12 @@ type InvitationWithTemplate = {
   } | null;
 };
 
-export default async function GuestListPage({ params }: { params: { id: string } }) {
+type PageProps = {
+  params: { id: string };
+  searchParams: Record<string, string | string[] | undefined>;
+};
+
+export default async function GuestListPage({ params }: PageProps) {
   const supabase = createServerClient();
 
   const { data: { user } } = await supabase.auth.getUser();
