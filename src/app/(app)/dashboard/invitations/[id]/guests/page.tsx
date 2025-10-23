@@ -2,9 +2,6 @@ import { createServerClient } from '@/lib/supabase/server';
 import { notFound, redirect } from 'next/navigation';
 import Link from 'next/link';
 
-// --- vvv NEW TYPE DEFINITION vvv ---
-// This is the blueprint for our invitation data, telling TypeScript
-// that 'templates' is a single object, not an array.
 type InvitationWithTemplate = {
   id: string;
   templates: {
@@ -12,16 +9,18 @@ type InvitationWithTemplate = {
   } | null;
 };
 
-type PageProps = {
-  params: Promise<{ id: string }>;
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
+type Props = {
+  params: Promise<{
+    [x: string]: string;
+    id: string;
+  }>;
 };
 
-export default async function GuestListPage({ params }: PageProps) {
+export default async function GuestListPage(props: Props) {
   const supabase = createServerClient();
   
   // Await params in Next.js 15
-  const { id } = await params;
+  const { id } = await props.params;
 
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/');

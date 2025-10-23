@@ -12,16 +12,18 @@ import NetflixTemplate from '@/components/templates/NetflixTemplate';
 
 export const dynamic = 'force-dynamic';
 
-type PageProps = {
-  params: Promise<{ id: string }>;
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
+type Props = {
+  params: Promise<{
+    [x: string]: string;
+    id: string;
+  }>;
 };
 
-export default async function InvitePage({ params }: PageProps) {
+export default async function InvitePage(props: Props) {
   const supabase = createServerClient();
   
   // Await params in Next.js 15
-  const { id } = await params;
+  const { id } = await props.params;
 
   const { data: invitationData } = await supabase
     .from('invitations')
