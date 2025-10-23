@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import Link from 'next/link';
+import Image from 'next/image';
 import { QRCodeSVG } from 'qrcode.react';
 import toast from 'react-hot-toast';
 
@@ -116,11 +117,13 @@ export default function Dashboard() {
               return (
                 <div key={invitation.id} className="border bg-white rounded-lg shadow-lg flex flex-col h-full">
                   <a href={invitationUrl} target="_blank" rel="noopener noreferrer" className="block group">
-                    <div className="overflow-hidden h-48 rounded-t-lg">
-                        <img 
+                    <div className="overflow-hidden h-48 rounded-t-lg relative">
+                        <Image 
                             src={invitation.templates?.preview_image_url || 'https://placehold.co/600x400?text=Image+Not+Found'}
                             alt={invitation.templates?.name || 'Invitation'}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            fill
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            className="object-cover group-hover:scale-105 transition-transform duration-300"
                         />
                     </div>
                   </a>
@@ -160,7 +163,7 @@ export default function Dashboard() {
         ) : (
           // ... (No invitations message is the same)
           <div className="text-center py-10 px-6 bg-gray-50 rounded-lg">
-            <p className="text-gray-600">You haven't created any invitations yet. Choose a template below to get started!</p>
+            <p className="text-gray-600">You haven&apos;t created any invitations yet. Choose a template below to get started!</p>
           </div>
         )}
       </section>
@@ -172,11 +175,13 @@ export default function Dashboard() {
           {templates.map((template) => (
             <Link href={`/editor/${template.id}`} key={template.id} className="block group">
               <div className="border bg-white rounded-lg shadow-lg overflow-hidden h-full hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
-                <div className="overflow-hidden h-56">
-                    <img
+                <div className="overflow-hidden h-56 relative">
+                    <Image
                         src={template.preview_image_url}
                         alt={template.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                 </div>
                 <div className="p-5">

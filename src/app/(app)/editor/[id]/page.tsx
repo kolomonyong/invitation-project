@@ -61,28 +61,7 @@ export default function EditorPage() {
       getData(); 
     }
   }, [params.id, supabase, router])
-  
-  // Add form validation
-  const validateForm = (): boolean => {
-    if (!templateStructure) return false;
-
-    for (const field of templateStructure.fields) {
-      if (field.required) {
-        if (field.type === 'image') {
-          if (!imageFiles[field.name]) {
-            toast.error(`Please select an image for ${field.label}`);
-            return false;
-          }
-        } else {
-          if (!formData[field.name] || formData[field.name].trim() === '') {
-            toast.error(`Please fill in ${field.label}`);
-            return false;
-          }
-        }
-      }
-    }
-    return true;
-  };
+  // Form validation is handled during form submission
   
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // Prevent any form submission behavior
@@ -134,7 +113,7 @@ export default function EditorPage() {
 
     // This is the full async action we want to track with one toast.
     const fullSavePromise = async () => {
-        let finalFormData = { ...formData };
+        const finalFormData = { ...formData };
 
         // --- 1. UPLOAD IMAGES IN PARALLEL ---
         // We create an array of promises, one for each file upload.

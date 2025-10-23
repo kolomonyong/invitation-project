@@ -5,6 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
+import Image from 'next/image';
 import type { User } from '@supabase/supabase-js';
 
 type Field = { 
@@ -72,7 +73,6 @@ export default function EditInvitationPage() {
 
       // 3. Initialize form data properly to avoid controlled/uncontrolled warnings
       const initialFormData: { [key: string]: string } = {};
-      const imageFieldName = template.structure_json.fields.find((f: Field) => f.type === 'image')?.name;
       
       template.structure_json.fields.forEach((field: Field) => {
         if (field.type === 'image') {
@@ -118,7 +118,7 @@ export default function EditInvitationPage() {
     
     setIsSubmitting(true);
 
-    let finalFormData = { ...formData };
+    const finalFormData = { ...formData };
 
     // Handle image upload if a new file was selected
     if (imageFile) {
@@ -201,9 +201,11 @@ export default function EditInvitationPage() {
                 ) : currentImageUrl ? (
                   <div className="mt-2">
                     <p className="text-sm text-gray-600 mb-2">Current image:</p>
-                    <img 
+                    <Image 
                       src={currentImageUrl} 
                       alt="Current invitation image" 
+                      width={320}
+                      height={128}
                       className="max-w-xs max-h-32 object-contain border rounded"
                     />
                     <p className="text-xs text-gray-500 mt-1">

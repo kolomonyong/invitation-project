@@ -14,7 +14,13 @@ const RsvpSchema = z.object({
   notes: z.string().optional(),
 });
 
-export async function submitRsvp(prevState: any, formData: FormData) {
+export async function submitRsvp(
+  prevState: { 
+    message?: string; 
+    errors?: Record<string, string[]> 
+  }, 
+  formData: FormData
+) {
   const supabase = createServerClient();
 
   // Extract and validate the form data
