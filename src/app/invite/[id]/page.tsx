@@ -13,17 +13,20 @@ import NetflixTemplate from '@/components/templates/NetflixTemplate';
 export const dynamic = 'force-dynamic';
 
 type PageProps = {
-  params: { id: string };
-  searchParams: Record<string, string | string[] | undefined>;
+  params: Promise<{ id: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
 export default async function InvitePage({ params }: PageProps) {
   const supabase = createServerClient();
+  
+  // Await params in Next.js 15
+  const { id } = await params;
 
   const { data: invitationData } = await supabase
     .from('invitations')
     .select('custom_data, template_id')
-    .eq('id', params.id)
+    .eq('id', id)
     .single();
 
   if (!invitationData) {
@@ -34,19 +37,19 @@ export default async function InvitePage({ params }: PageProps) {
   switch (invitationData.template_id) {
     case 1:
       // If template_id is 1, show the Birthday design
-      return <BirthdayTemplate1 invitationId={params.id} custom_data={invitationData.custom_data} />;
+      return <BirthdayTemplate1 invitationId={id} custom_data={invitationData.custom_data} />;
     
     // --- vvv ADD THIS NEW CASE vvv ---
     case 2:
       // If template_id is 2, show the Wedding design
-      return <WeddingTemplate1 invitationId={params.id} custom_data={invitationData.custom_data} />;
+      return <WeddingTemplate1 invitationId={id} custom_data={invitationData.custom_data} />;
     // --- ^^^ ADD THIS NEW CASE ^^^ ---
     case 5:
-      return <WeddingTemplate2 invitationId={params.id} custom_data={invitationData.custom_data} />;
+      return <WeddingTemplate2 invitationId={id} custom_data={invitationData.custom_data} />;
     case 6: 
-          return <IslamicWeddingTemplate invitationId={params.id} custom_data={invitationData.custom_data} />;
+          return <IslamicWeddingTemplate invitationId={id} custom_data={invitationData.custom_data} />;
     case 7:
-      return <NetflixTemplate invitationId={params.id} custom_data={invitationData.custom_data} />;
+      return <NetflixTemplate invitationId={id} custom_data={invitationData.custom_data} />;
     default:
       // The fallback message for any other template IDs
       return (

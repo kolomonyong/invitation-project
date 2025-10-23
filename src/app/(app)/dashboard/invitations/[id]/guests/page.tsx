@@ -14,12 +14,15 @@ type InvitationWithTemplate = {
 };
 
 type PageProps = {
-  params: { id: string };
-  searchParams: Record<string, string | string[] | undefined>;
+  params: Promise<{ id: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
 export default async function GuestListPage({ params }: PageProps) {
   const supabase = createServerClient();
+  
+  // Await params in Next.js 15
+  const { id } = await params;
 
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/');
@@ -27,7 +30,7 @@ export default async function GuestListPage({ params }: PageProps) {
   const { data, error: invError } = await supabase
     .from('invitations')
     .select('id, templates (name)')
-    .eq('id', params.id)
+    .eq('id', id)
     .eq('user_id', user.id)
     .single();
 
@@ -43,7 +46,7 @@ export default async function GuestListPage({ params }: PageProps) {
   const { data: rsvps, error: rsvpError } = await supabase
     .from('rsvps')
     .select('*')
-    .eq('invitation_id', params.id)
+    .eq('invitation_id', id)
     .order('created_at', { ascending: true });
   
   if (rsvpError) {
