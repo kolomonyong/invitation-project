@@ -31,21 +31,29 @@ export default function Dashboard() {
   const [myInvitations, setMyInvitations] = useState<Invitation[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://invitation-project-ten.vercel.app/';
 
   useEffect(() => {
     // ... (This data fetching logic is the same)
     const getData = async () => {
       setLoading(true);
       const { data: { user } } = await supabase.auth.getUser();
+      console.log('Current user:', user?.id);
+      
       if (user) {
-        const { data: templatesData } = await supabase.from('templates').select('*');
+        const { data: templatesData, error: templatesError } = await supabase.from('templates').select('*');
+        console.log('Templates data:', templatesData);
+        console.log('Templates error:', templatesError);
         if (templatesData) setTemplates(templatesData);
+        
         const { data: invitationsData, error: invitationsError } = await supabase
           .from('invitations')
           .select(`id, created_at, templates ( name, preview_image_url )`)
           .eq('user_id', user.id)
           .order('created_at', { ascending: false });
+        
+        console.log('Invitations data:', invitationsData);
+        console.log('Invitations error:', invitationsError);
         
         if (invitationsError) {
           console.error("Error fetching invitations with join:", invitationsError);
