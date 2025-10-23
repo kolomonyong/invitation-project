@@ -1,0 +1,14 @@
+{
+  "buildCommand": "next build",
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD ./",
+  "installCommand": "npm install",
+  "framework": "nextjs",
+  "outputDirectory": ".next",
+  "regions": ["sfo1"],
+  "git": {
+    "deploymentEnabled": {
+      "main": true,
+      "restored-first-commit": true
+    }
+  }
+}
