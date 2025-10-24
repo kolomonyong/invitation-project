@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { QRCodeSVG } from 'qrcode.react';
@@ -27,11 +28,23 @@ type Invitation = {
 
 export default function Dashboard() {
   const supabase = createClient();
+  const router = useRouter();
   const [templates, setTemplates] = useState<Template[]>([]);
   const [myInvitations, setMyInvitations] = useState<Invitation[]>([]);
   const [loading, setLoading] = useState(true);
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://invitation-project-ten.vercel.app/';
+
+  // Check authentication
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        router.push('/');
+      }
+    };
+    checkAuth();
+  }, [router, supabase]);
 
   useEffect(() => {
     // ... (This data fetching logic is the same)
