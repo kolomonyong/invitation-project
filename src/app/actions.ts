@@ -21,7 +21,7 @@ export async function submitRsvp(
   }, 
   formData: FormData
 ) {
-  const supabase = createServerClient();
+  const supabase = await createServerClient();
 
   // Extract and validate the form data
   const validatedFields = RsvpSchema.safeParse({

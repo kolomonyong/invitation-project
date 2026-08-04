@@ -17,7 +17,7 @@ type Props = {
 };
 
 export default async function GuestListPage(props: Props) {
-  const supabase = createServerClient();
+  const supabase = await createServerClient();
   
   // Await params in Next.js 15
   const { id } = await props.params;
