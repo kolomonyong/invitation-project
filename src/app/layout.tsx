@@ -1,6 +1,6 @@
 // src/app/layout.tsx
 import type { Metadata } from "next";
-import { Caladea, Lato, Bebas_Neue } from "next/font/google"; // <-- IMPORT FONTS
+import { Caladea, Lato, Bebas_Neue, Lexend_Deca } from "next/font/google"; // <-- IMPORT FONTS
 import "./globals.css";
 import { Toaster } from 'react-hot-toast';
 
@@ -23,11 +23,17 @@ const bebas_neue = Bebas_Neue({
   weight: ['400'],
   variable: '--font-bebas-neue',
 });
+
+const lexendDeca = Lexend_Deca({
+  subsets: ["latin"],
+  weight: ['300', '400', '500', '600', '700', '800'],
+  variable: '--font-lexend-deca',
+});
 // --- ^^^ CONFIGURE THE FONTS ^^^ ---
 
 export const metadata: Metadata = {
-  title: "Digital Invitations",
-  description: "Create and share beautiful digital invitations.",
+  title: "Digital Invitations – Create & Share Beautiful Invitations",
+  description: "Create and share beautiful digital invitations for weddings, birthdays, and every special moment.",
 };
 
 export default function RootLayout({
@@ -38,7 +44,7 @@ export default function RootLayout({
   // Apply the font variables to the body tag
   return (
     <html lang="en">
-      <body className={`${caladea.variable} ${lato.variable} ${bebas_neue.variable}`}>
+      <body className={`${caladea.variable} ${lato.variable} ${bebas_neue.variable} ${lexendDeca.variable}`}>
         <Toaster position="top-center" />
         {children}
       </body>

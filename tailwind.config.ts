@@ -13,6 +13,7 @@ const config: Config = {
         caladea: ['var(--font-caladea)'],
         lato: ['var(--font-lato)'],
         bebas: ['var(--font-bebas-neue)'],
+        lexend: ['var(--font-lexend-deca)', 'Inter', 'sans-serif'],
       },
     },
   },
