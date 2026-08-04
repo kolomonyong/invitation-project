@@ -14,7 +14,7 @@
     "@supabase/auth-ui-shared": "^0.1.8",
     "@supabase/supabase-js": "^2.54.0",
     "@types/react-youtube": "^7.6.2",
-    "next": "15.4.6",
+    "next": "15.4.10",
     "qrcode.react": "^4.2.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
