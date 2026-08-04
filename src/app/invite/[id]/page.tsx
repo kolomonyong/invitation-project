@@ -1,5 +1,4 @@
-// src/app/invite/[id]/page.tsx
-import { createServerClient } from '@/lib/supabase/server';
+import { createClient } from '@supabase/supabase-js';
 import { notFound } from 'next/navigation';
 
 // --- vvv IMPORT OUR NEW TEMPLATE vvv ---
@@ -20,18 +19,24 @@ type Props = {
 };
 
 export default async function InvitePage(props: Props) {
-  const supabase = createServerClient();
+  // Use standard client without cookies since public invitations don't need auth.
+  // This avoids Next.js 15 async cookies() crashes with the old auth-helpers package.
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
   
   // Await params in Next.js 15
   const { id } = await props.params;
 
-  const { data: invitationData } = await supabase
+  const { data: invitationData, error } = await supabase
     .from('invitations')
     .select('custom_data, template_id')
     .eq('id', id)
     .single();
 
-  if (!invitationData) {
+  if (error || !invitationData) {
+    console.error("Error fetching invitation:", error);
     notFound();
   }
   
