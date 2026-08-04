@@ -162,7 +162,7 @@ export default function Sidebar({ isOpen, onClose, userEmail }: SidebarProps) {
         >
           <div
             className="flex items-center justify-between gap-3 p-2.5 rounded-2xl ring-1 transition-all cursor-default"
-            style={{ borderColor: 'var(--border)', ringColor: 'var(--border)' }}
+            style={{ borderColor: 'var(--border)' }}
           >
             <div className="flex items-center gap-3 min-w-0">
               <div
