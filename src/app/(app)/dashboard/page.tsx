@@ -169,21 +169,24 @@ function InvitationCard({
     >
       {/* Poster */}
       <div className="relative w-full aspect-video overflow-hidden bg-muted">
-        {imgSrc ? (
-          <Image
+        {/* Fallback Background (always behind) */}
+        <div
+          className="absolute inset-0 flex items-center justify-center"
+          style={{ background: 'linear-gradient(135deg, var(--primary-light), #F5F3FF)' }}
+        >
+          <EnvelopeIcon className="w-12 h-12" style={{ color: 'var(--primary)', opacity: 0.4 }} />
+        </div>
+
+        {/* Poster Image (covers fallback if loaded successfully) */}
+        {imgSrc && (
+          <img
             src={imgSrc}
             alt={name}
-            fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            className="object-cover group-hover:scale-105 transition-transform duration-500"
+            onError={(e) => {
+              (e.currentTarget as HTMLImageElement).style.opacity = '0';
+            }}
+            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-all duration-500"
           />
-        ) : (
-          <div
-            className="absolute inset-0 flex items-center justify-center"
-            style={{ background: 'linear-gradient(135deg, var(--primary-light), #F5F3FF)' }}
-          >
-            <EnvelopeIcon className="w-12 h-12" style={{ color: 'var(--primary)', opacity: 0.4 }} />
-          </div>
         )}
         {/* Category badge */}
         <div className="absolute top-3 left-3">

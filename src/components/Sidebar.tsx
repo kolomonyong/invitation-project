@@ -88,9 +88,10 @@ export default function Sidebar({ isOpen, onClose, userEmail }: SidebarProps) {
 
       {/* Sidebar */}
       <aside
-        className="flex flex-col w-[272px] shrink-0 h-screen fixed inset-y-0 left-0 z-50 bg-white border-r border-border transition-transform duration-300 overflow-hidden"
+        className={`flex flex-col w-[272px] shrink-0 h-screen fixed inset-y-0 left-0 z-50 bg-white border-r border-border transition-transform duration-300 overflow-hidden ${
+          isOpen ? 'translate-x-0' : '-translate-x-full'
+        } lg:translate-x-0`}
         style={{
-          transform: isOpen ? 'translateX(0)' : 'translateX(-100%)',
           borderColor: 'var(--border)',
         }}
       >
