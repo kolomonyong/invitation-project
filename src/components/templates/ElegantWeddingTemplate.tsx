@@ -1,0 +1,380 @@
+'use client';
+
+import { useState, useEffect, useRef } from 'react';
+import { useCountdown } from '@/hooks/useCountdown';
+import RsvpForm from '../RsvpForm';
+import toast from 'react-hot-toast';
+
+type Props = {
+  invitationId: string;
+  custom_data: {
+    heroPhoto1?: string;
+    heroPhoto2?: string;
+    heroPhoto3?: string;
+    coupleNames?: string;
+    eventDateDisplay?: string;
+    groomFullName?: string;
+    groomNickname?: string;
+    groomParents?: string;
+    groomPhoto?: string;
+    brideFullName?: string;
+    brideNickname?: string;
+    brideParents?: string;
+    bridePhoto?: string;
+    openingQuote?: string;
+    openingQuoteSource?: string;
+    akadDate?: string;
+    akadTime?: string;
+    akadVenue?: string;
+    akadAddress?: string;
+    receptionDate?: string;
+    receptionTime?: string;
+    receptionVenue?: string;
+    receptionAddress?: string;
+    countdownTarget?: string;
+    galleryPhoto1?: string;
+    galleryPhoto2?: string;
+    galleryPhoto3?: string;
+    galleryPhoto4?: string;
+    galleryPhoto5?: string;
+    galleryPhoto6?: string;
+    giftBankName?: string;
+    giftBankAccount?: string;
+    giftAccountHolder?: string;
+    closingMessage?: string;
+  };
+};
+
+function CountdownBox({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="flex flex-col items-center">
+      <div
+        className="w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center rounded-xl text-2xl sm:text-3xl font-bold border border-[#c9a84c]/40"
+        style={{ background: 'rgba(201,168,76,0.08)', color: '#e8c96e', fontFamily: 'Cormorant Garamond, serif' }}
+      >
+        {String(Math.max(0, value)).padStart(2, '0')}
+      </div>
+      <span className="mt-2 text-[10px] sm:text-xs uppercase tracking-widest" style={{ color: '#c9a84c' }}>
+        {label}
+      </span>
+    </div>
+  );
+}
+
+function Countdown({ target }: { target: string }) {
+  const { days, hours, minutes, seconds } = useCountdown(target);
+  const passed = days < 0 && hours < 0 && minutes < 0 && seconds < 0;
+  if (passed) return <p className="text-[#c9a84c] text-xl italic">The moment has arrived ✨</p>;
+  return (
+    <div className="flex gap-4 sm:gap-6 justify-center">
+      <CountdownBox label="Days" value={days} />
+      <CountdownBox label="Hours" value={hours} />
+      <CountdownBox label="Minutes" value={minutes} />
+      <CountdownBox label="Seconds" value={seconds} />
+    </div>
+  );
+}
+
+function GoldDivider() {
+  return (
+    <div className="flex items-center gap-3 justify-center my-6">
+      <div className="h-px flex-1 max-w-[80px]" style={{ background: 'linear-gradient(to right, transparent, #c9a84c)' }} />
+      <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+        <path d="M10 2L11.5 7.5L17 6L13 10L17 14L11.5 12.5L10 18L8.5 12.5L3 14L7 10L3 6L8.5 7.5L10 2Z" fill="#c9a84c" />
+      </svg>
+      <div className="h-px flex-1 max-w-[80px]" style={{ background: 'linear-gradient(to left, transparent, #c9a84c)' }} />
+    </div>
+  );
+}
+
+function EventCard({ title, subtitle, date, time, venue, address }: {
+  title: string; subtitle: string; date: string; time?: string; venue?: string; address?: string;
+}) {
+  const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address || venue || '')}`;
+  return (
+    <div
+      className="rounded-2xl p-6 text-center border border-[#c9a84c]/30 flex flex-col gap-3"
+      style={{ background: 'rgba(201,168,76,0.06)' }}
+    >
+      <div>
+        <p className="text-xs uppercase tracking-widest mb-1" style={{ color: '#c9a84c' }}>{subtitle}</p>
+        <h3 className="text-2xl font-bold" style={{ fontFamily: 'Cormorant Garamond, serif', color: '#e8c96e' }}>{title}</h3>
+      </div>
+      <GoldDivider />
+      <div className="space-y-1 text-sm" style={{ color: '#d4bfa0' }}>
+        <p className="font-semibold text-base" style={{ color: '#f0e0b0' }}>{date}</p>
+        {time && <p>{time}</p>}
+        {venue && <p className="font-semibold mt-2" style={{ color: '#e8c96e' }}>{venue}</p>}
+        {address && <p className="text-xs">{address}</p>}
+      </div>
+      {(address || venue) && (
+        <a
+          href={mapsUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-2 inline-block px-5 py-2 rounded-full text-xs font-bold tracking-wide transition-all hover:opacity-80"
+          style={{ background: 'linear-gradient(135deg, #c9a84c, #e8c96e)', color: '#0d1b2a' }}
+        >
+          View Location
+        </a>
+      )}
+    </div>
+  );
+}
+
+function HeroSlideshow({ photos, coupleNames, eventDateDisplay, onOpen, showButton }: {
+  photos: string[]; coupleNames?: string; eventDateDisplay?: string; onOpen: () => void; showButton: boolean;
+}) {
+  const [current, setCurrent] = useState(0);
+  const [zoom, setZoom] = useState(true);
+
+  useEffect(() => {
+    if (photos.length <= 1) return;
+    const interval = setInterval(() => {
+      setZoom(false);
+      setTimeout(() => {
+        setCurrent(i => (i + 1) % photos.length);
+        setZoom(true);
+      }, 700);
+    }, 5500);
+    return () => clearInterval(interval);
+  }, [photos.length]);
+
+  const bg = photos[current];
+
+  return (
+    <div className="relative h-screen w-full overflow-hidden flex flex-col items-center justify-end pb-16">
+      {bg ? (
+        <div
+          className="absolute inset-0 bg-cover bg-center transition-transform duration-[7000ms] ease-in-out"
+          style={{ backgroundImage: `url(${bg})`, transform: zoom ? 'scale(1.08)' : 'scale(1)' }}
+        />
+      ) : (
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, #0d1b2a 0%, #1a2e4a 50%, #0d1b2a 100%)' }} />
+      )}
+      <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(10,15,30,0.92) 30%, rgba(10,15,30,0.35) 70%)' }} />
+      <div className="relative z-10 text-center px-6 w-full max-w-lg">
+        <p className="uppercase tracking-[0.35em] text-xs mb-3 opacity-80" style={{ color: '#c9a84c', fontFamily: 'Lora, serif' }}>
+          The Wedding of
+        </p>
+        <h1
+          className="text-5xl sm:text-6xl mb-3 leading-tight"
+          style={{ fontFamily: 'Cormorant Garamond, serif', color: '#f0e0b0', fontStyle: 'italic' }}
+        >
+          {coupleNames || 'Bride & Groom'}
+        </h1>
+        {eventDateDisplay && (
+          <p className="text-sm tracking-[0.3em] mb-8 opacity-80" style={{ color: '#c9a84c' }}>
+            {eventDateDisplay}
+          </p>
+        )}
+        {showButton && (
+          <button
+            onClick={onOpen}
+            className="inline-flex items-center gap-2 px-8 py-3 rounded-full text-sm font-bold tracking-widest uppercase transition-all hover:scale-105 active:scale-95"
+            style={{ background: 'linear-gradient(135deg, #c9a84c, #e8c96e)', color: '#0d1b2a', boxShadow: '0 4px 24px rgba(201,168,76,0.35)' }}
+          >
+            Open Invitation ✦
+          </button>
+        )}
+        {photos.length > 1 && (
+          <div className="flex gap-2 justify-center mt-6">
+            {photos.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => { setCurrent(i); setZoom(true); }}
+                className="w-1.5 h-1.5 rounded-full transition-all"
+                style={{ background: i === current ? '#c9a84c' : 'rgba(201,168,76,0.3)' }}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default function ElegantWeddingTemplate({ invitationId, custom_data }: Props) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleCopy = (text?: string) => {
+    if (!text) return;
+    navigator.clipboard.writeText(text);
+    toast.success('Account number copied!');
+  };
+
+  const formatDate = (d?: string) => {
+    if (!d) return 'Date TBD';
+    return new Date(d).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  };
+
+  const heroPhotos = [custom_data.heroPhoto1, custom_data.heroPhoto2, custom_data.heroPhoto3].filter(Boolean) as string[];
+  const galleryPhotos = [
+    custom_data.galleryPhoto1, custom_data.galleryPhoto2, custom_data.galleryPhoto3,
+    custom_data.galleryPhoto4, custom_data.galleryPhoto5, custom_data.galleryPhoto6,
+  ].filter(Boolean) as string[];
+
+  const darkBg = { background: '#0d1b2a' };
+
+  if (!isOpen) {
+    return (
+      <div style={darkBg}>
+        <HeroSlideshow
+          photos={heroPhotos}
+          coupleNames={custom_data.coupleNames}
+          eventDateDisplay={custom_data.eventDateDisplay}
+          onOpen={() => setIsOpen(true)}
+          showButton={true}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ ...darkBg, fontFamily: 'Lora, serif', color: '#d4bfa0' }}>
+
+      {/* Hero */}
+      <section className="relative">
+        <HeroSlideshow
+          photos={heroPhotos}
+          coupleNames={custom_data.coupleNames}
+          eventDateDisplay={custom_data.eventDateDisplay}
+          onOpen={() => {}}
+          showButton={false}
+        />
+        <div className="absolute bottom-0 left-0 right-0 pointer-events-none">
+          <svg viewBox="0 0 1440 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" className="w-full h-12">
+            <path d="M0,40 C180,80 360,0 540,40 C720,80 900,0 1080,40 C1260,80 1440,20 1440,20 L1440,80 L0,80 Z" fill="#0d1b2a" />
+          </svg>
+        </div>
+      </section>
+
+      {/* Opening Quote */}
+      <section className="py-14 px-6 text-center max-w-2xl mx-auto">
+        <GoldDivider />
+        <blockquote className="text-lg sm:text-xl italic leading-relaxed" style={{ fontFamily: 'Cormorant Garamond, serif', color: '#d4bfa0' }}>
+          &ldquo;{custom_data.openingQuote || 'Dan di antara tanda-tanda kebesaran-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri.'}&rdquo;
+        </blockquote>
+        <p className="mt-3 text-xs tracking-widest uppercase" style={{ color: '#c9a84c' }}>
+          {custom_data.openingQuoteSource || '— Q.S. Ar-Rum: 21'}
+        </p>
+        <GoldDivider />
+      </section>
+
+      {/* Couple Profile */}
+      <section className="py-14 px-6">
+        <p className="text-center text-xs uppercase tracking-[0.35em] mb-2" style={{ color: '#c9a84c' }}>With the blessing of God</p>
+        <h2 className="text-center text-4xl sm:text-5xl mb-12 italic" style={{ fontFamily: 'Cormorant Garamond, serif', color: '#e8c96e' }}>
+          {custom_data.coupleNames || 'Bride & Groom'}
+        </h2>
+        <div className="flex flex-col md:flex-row items-center justify-center gap-10 md:gap-16 max-w-3xl mx-auto">
+          {[
+            { photo: custom_data.groomPhoto, nickname: custom_data.groomNickname || custom_data.groomFullName, fullName: custom_data.groomFullName, parents: custom_data.groomParents, label: 'Son of' },
+            null,
+            { photo: custom_data.bridePhoto, nickname: custom_data.brideNickname || custom_data.brideFullName, fullName: custom_data.brideFullName, parents: custom_data.brideParents, label: 'Daughter of' },
+          ].map((person, i) => {
+            if (!person) return (
+              <div key={i} className="text-7xl leading-none opacity-40" style={{ fontFamily: 'Cormorant Garamond, serif', color: '#c9a84c' }}>&</div>
+            );
+            return (
+              <div key={i} className="flex flex-col items-center text-center gap-4">
+                <div
+                  className="w-36 h-36 rounded-full border-4 overflow-hidden shrink-0"
+                  style={{ borderColor: '#c9a84c', boxShadow: '0 0 0 6px rgba(201,168,76,0.12)' }}
+                >
+                  {person.photo ? (
+                    <img src={person.photo} alt={person.nickname} className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-4xl" style={{ background: 'rgba(201,168,76,0.08)' }}>
+                      👤
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold italic" style={{ fontFamily: 'Cormorant Garamond, serif', color: '#f0e0b0' }}>
+                    {person.nickname}
+                  </h3>
+                  {person.fullName && person.nickname !== person.fullName && (
+                    <p className="text-sm mt-0.5 italic" style={{ color: '#c9a84c' }}>{person.fullName}</p>
+                  )}
+                  <p className="text-xs mt-1 opacity-60">{person.parents || `${person.label} beloved parents`}</p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* Countdown */}
+      {custom_data.countdownTarget && (
+        <section className="py-14 px-6 text-center" style={{ background: 'rgba(201,168,76,0.04)', borderTop: '1px solid rgba(201,168,76,0.12)', borderBottom: '1px solid rgba(201,168,76,0.12)' }}>
+          <p className="text-xs uppercase tracking-[0.35em] mb-2" style={{ color: '#c9a84c' }}>Menuju Hari Bahagia</p>
+          <h2 className="text-3xl italic mb-10" style={{ fontFamily: 'Cormorant Garamond, serif', color: '#e8c96e' }}>Counting Down</h2>
+          <Countdown target={custom_data.countdownTarget} />
+        </section>
+      )}
+
+      {/* Event Details */}
+      <section className="py-14 px-6">
+        <p className="text-center text-xs uppercase tracking-[0.35em] mb-2" style={{ color: '#c9a84c' }}>Rangkaian Acara</p>
+        <h2 className="text-center text-3xl italic mb-10" style={{ fontFamily: 'Cormorant Garamond, serif', color: '#e8c96e' }}>Wedding Events</h2>
+        <div className="max-w-3xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+          <EventCard title="Akad Nikah" subtitle="Holy Matrimony" date={formatDate(custom_data.akadDate)} time={custom_data.akadTime} venue={custom_data.akadVenue} address={custom_data.akadAddress} />
+          <EventCard title="Resepsi" subtitle="Wedding Reception" date={formatDate(custom_data.receptionDate)} time={custom_data.receptionTime} venue={custom_data.receptionVenue} address={custom_data.receptionAddress} />
+        </div>
+      </section>
+
+      {/* Gallery */}
+      {galleryPhotos.length > 0 && (
+        <section className="py-14 px-6" style={{ background: 'rgba(201,168,76,0.04)', borderTop: '1px solid rgba(201,168,76,0.12)' }}>
+          <p className="text-center text-xs uppercase tracking-[0.35em] mb-2" style={{ color: '#c9a84c' }}>Our Story</p>
+          <h2 className="text-center text-3xl italic mb-10" style={{ fontFamily: 'Cormorant Garamond, serif', color: '#e8c96e' }}>Gallery</h2>
+          <div className="max-w-3xl mx-auto grid grid-cols-2 md:grid-cols-3 gap-3">
+            {galleryPhotos.map((url, i) => (
+              <div key={i} className="rounded-xl overflow-hidden aspect-square group" style={{ border: '1px solid rgba(201,168,76,0.2)' }}>
+                <img src={url} alt={`Gallery ${i + 1}`} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Gift */}
+      {custom_data.giftBankName && (
+        <section className="py-14 px-6 text-center">
+          <p className="text-xs uppercase tracking-[0.35em] mb-2" style={{ color: '#c9a84c' }}>Wedding Gift</p>
+          <h2 className="text-3xl italic mb-4" style={{ fontFamily: 'Cormorant Garamond, serif', color: '#e8c96e' }}>Hadiah Pernikahan</h2>
+          <p className="max-w-md mx-auto text-sm mb-8 opacity-60">Kehadiran Anda adalah hadiah terbesar. Namun jika ingin memberikan tanda kasih, dapat mengirimkan melalui:</p>
+          <div className="max-w-sm mx-auto rounded-2xl p-6 border border-[#c9a84c]/30 space-y-2" style={{ background: 'rgba(201,168,76,0.06)' }}>
+            <p className="text-sm uppercase tracking-widest" style={{ color: '#c9a84c' }}>{custom_data.giftBankName}</p>
+            <p className="text-3xl font-bold tracking-wider" style={{ fontFamily: 'Cormorant Garamond, serif', color: '#f0e0b0' }}>{custom_data.giftBankAccount}</p>
+            <p className="text-sm opacity-50">a.n. {custom_data.giftAccountHolder}</p>
+            <button onClick={() => handleCopy(custom_data.giftBankAccount)} className="mt-4 px-6 py-2 rounded-full text-xs font-bold uppercase tracking-widest hover:opacity-80 transition-all" style={{ background: 'linear-gradient(135deg, #c9a84c, #e8c96e)', color: '#0d1b2a' }}>
+              Copy No. Rekening
+            </button>
+          </div>
+        </section>
+      )}
+
+      {/* RSVP */}
+      <section className="py-14 px-6" style={{ background: 'rgba(201,168,76,0.04)', borderTop: '1px solid rgba(201,168,76,0.12)', borderBottom: '1px solid rgba(201,168,76,0.12)' }}>
+        <p className="text-center text-xs uppercase tracking-[0.35em] mb-2" style={{ color: '#c9a84c' }}>Konfirmasi Kehadiran</p>
+        <h2 className="text-center text-3xl italic mb-10" style={{ fontFamily: 'Cormorant Garamond, serif', color: '#e8c96e' }}>RSVP</h2>
+        <div className="max-w-lg mx-auto">
+          <RsvpForm invitationId={invitationId} />
+        </div>
+      </section>
+
+      {/* Closing */}
+      <section className="py-14 px-6 text-center max-w-2xl mx-auto">
+        <GoldDivider />
+        <p className="text-lg sm:text-xl italic leading-relaxed mb-4" style={{ fontFamily: 'Cormorant Garamond, serif', color: '#d4bfa0' }}>
+          &ldquo;{custom_data.closingMessage || 'Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu.'}&rdquo;
+        </p>
+        <p className="text-sm" style={{ color: '#c9a84c' }}>{custom_data.coupleNames || 'Bride & Groom'}</p>
+        <GoldDivider />
+        <p className="text-xs opacity-30 mt-4">Digital Invitation © {new Date().getFullYear()}</p>
+      </section>
+    </div>
+  );
+}
