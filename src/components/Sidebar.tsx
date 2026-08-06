@@ -46,9 +46,8 @@ const XIcon = ({ className, style }: { className?: string; style?: React.CSSProp
 
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutIcon },
-  { href: '/dashboard/invitations', label: 'My Invitations', icon: EnvelopeOpenIcon },
-  { href: '/dashboard/create', label: 'Create New', icon: PlusCircleIcon },
-  { href: '/dashboard/guests', label: 'Guest Lists', icon: UsersIcon },
+  { href: '/dashboard#invitations', label: 'My Invitations', icon: EnvelopeOpenIcon },
+  { href: '/dashboard#templates', label: 'Create New', icon: PlusCircleIcon },
 ]
 
 interface SidebarProps {
@@ -64,7 +63,9 @@ export default function Sidebar({ isOpen, onClose, userEmail }: SidebarProps) {
   const [showLogout, setShowLogout] = useState(false);
 
   // Close sidebar on route change (mobile)
-  useEffect(() => { onClose(); }, [pathname]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    onClose();
+  }, [pathname, onClose]);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -81,16 +82,17 @@ export default function Sidebar({ isOpen, onClose, userEmail }: SidebarProps) {
       {/* Mobile overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/60 z-40 lg:hidden backdrop-blur-sm"
+          className="fixed inset-0 bg-black/40 z-40 lg:hidden backdrop-blur-sm transition-opacity"
           onClick={onClose}
         />
       )}
 
       {/* Sidebar */}
       <aside
-        className="flex flex-col w-[272px] shrink-0 h-screen fixed inset-y-0 left-0 z-50 bg-white border-r border-border transition-transform duration-300 overflow-hidden"
+        className={`flex flex-col w-[272px] shrink-0 h-screen fixed inset-y-0 left-0 z-50 bg-white border-r border-border transition-transform duration-300 overflow-hidden ${
+          isOpen ? 'translate-x-0' : '-translate-x-full'
+        } lg:translate-x-0`}
         style={{
-          transform: isOpen ? 'translateX(0)' : 'translateX(-100%)',
           borderColor: 'var(--border)',
         }}
       >

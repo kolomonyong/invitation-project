@@ -591,7 +591,7 @@ export default function Dashboard() {
       </div>
 
       {/* ─── Invitations Section ─────────────────────────────────────── */}
-      <section className="mb-14">
+      <section className="mb-14" id="invitations">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-5">
           <h2 className="text-lg font-bold" style={{ color: 'var(--foreground)' }}>
             Your Invitations
