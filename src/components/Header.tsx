@@ -14,7 +14,7 @@ export default function Header() {
     await supabase.auth.signOut();
     // --- vvv ADD THIS LINE vvv ---
     toast.success("You have been signed out successfully.");
-    router.push('/'); 
+    router.push('/login'); 
   };
 
   return (

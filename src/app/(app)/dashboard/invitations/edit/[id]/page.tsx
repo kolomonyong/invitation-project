@@ -37,7 +37,7 @@ export default function EditInvitationPage() {
       setUser(user);
 
       if (!user) {
-        router.push('/');
+        router.push('/login');
         setLoading(false);
         return;
       }

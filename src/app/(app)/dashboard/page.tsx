@@ -491,7 +491,7 @@ export default function Dashboard() {
     const getData = async () => {
       setLoading(true);
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) { router.push('/'); return; }
+      if (!user) { router.push('/login'); return; }
 
       const [{ data: tplData }, { data: invData, error: invError }] = await Promise.all([
         supabase.from('templates').select('*'),

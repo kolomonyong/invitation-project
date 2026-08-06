@@ -30,7 +30,7 @@ export default function EditorPage() {
       
       if (!user) {
         toast.error("Please log in to access this page.");
-        router.push('/');
+        router.push('/login');
         return;
       }
 

@@ -74,7 +74,7 @@ export default function Sidebar({ isOpen, onClose, userEmail }: SidebarProps) {
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     toast.success('Signed out successfully');
-    router.push('/');
+    router.push('/login');
   };
 
   const initials = userEmail
