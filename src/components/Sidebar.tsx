@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import toast from 'react-hot-toast';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 // ─── Icons ──────────────────────────────────────────────────────────────────
 const LayoutIcon = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
@@ -61,10 +61,14 @@ export default function Sidebar({ isOpen, onClose, userEmail }: SidebarProps) {
   const router = useRouter();
   const supabase = createClient();
   const [showLogout, setShowLogout] = useState(false);
+  const prevPathname = useRef(pathname);
 
-  // Close sidebar on route change (mobile)
+  // Only close sidebar when the route actually changes (not on initial mount)
   useEffect(() => {
-    onClose();
+    if (prevPathname.current !== pathname) {
+      prevPathname.current = pathname;
+      onClose();
+    }
   }, [pathname, onClose]);
 
   const handleSignOut = async () => {

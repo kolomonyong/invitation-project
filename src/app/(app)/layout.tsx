@@ -1,7 +1,7 @@
 // src/app/(app)/layout.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import Sidebar from '@/components/Sidebar';
 import DashboardHeader from '@/components/DashboardHeader';
@@ -9,6 +9,9 @@ import DashboardHeader from '@/components/DashboardHeader';
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [userEmail, setUserEmail] = useState<string | undefined>();
+
+  const handleOpenSidebar = useCallback(() => setSidebarOpen(true), []);
+  const handleCloseSidebar = useCallback(() => setSidebarOpen(false), []);
 
   useEffect(() => {
     const supabase = createClient();
@@ -25,14 +28,14 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       {/* Fixed Sidebar */}
       <Sidebar
         isOpen={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
+        onClose={handleCloseSidebar}
         userEmail={userEmail}
       />
 
       {/* Main area offset by sidebar width on desktop */}
       <div className="flex-1 flex flex-col min-h-screen lg:ml-[272px]">
         <DashboardHeader
-          onOpenSidebar={() => setSidebarOpen(true)}
+          onOpenSidebar={handleOpenSidebar}
           title="Dashboard"
         />
         <main className="flex-1 overflow-y-auto">
