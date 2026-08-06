@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useCountdown } from '@/hooks/useCountdown';
 import RsvpForm from '../RsvpForm';
 import toast from 'react-hot-toast';
@@ -42,6 +42,7 @@ type Props = {
     giftBankAccount?: string;
     giftAccountHolder?: string;
     closingMessage?: string;
+    backgroundMusicUrl?: string;
   };
 };
 
@@ -194,8 +195,50 @@ function HeroSlideshow({ photos, coupleNames, eventDateDisplay, onOpen, showButt
   );
 }
 
+// Extract a YouTube video ID from a full URL or bare ID
+function extractYouTubeId(input?: string): string | null {
+  if (!input) return null;
+  // Already a bare ID (11 chars, no slashes)
+  if (/^[a-zA-Z0-9_-]{11}$/.test(input.trim())) return input.trim();
+  try {
+    const url = new URL(input);
+    // youtu.be/ID
+    if (url.hostname === 'youtu.be') return url.pathname.slice(1).split('?')[0];
+    // youtube.com/watch?v=ID
+    const v = url.searchParams.get('v');
+    if (v) return v;
+    // youtube.com/embed/ID
+    const embedMatch = url.pathname.match(/\/embed\/([a-zA-Z0-9_-]{11})/);
+    if (embedMatch) return embedMatch[1];
+  } catch {
+    // not a valid URL – try regex fallback
+    const m = input.match(/(?:v=|youtu\.be\/|embed\/)([a-zA-Z0-9_-]{11})/);
+    if (m) return m[1];
+  }
+  return null;
+}
+
 export default function ElegantWeddingTemplate({ invitationId, custom_data }: Props) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const playerRef = useRef<HTMLIFrameElement>(null);
+
+  const videoId = extractYouTubeId(custom_data.backgroundMusicUrl);
+
+  // Send mute/unmute commands to the YouTube iframe via postMessage
+  const sendYTCommand = useCallback((command: string) => {
+    playerRef.current?.contentWindow?.postMessage(
+      JSON.stringify({ event: 'command', func: command, args: [] }),
+      '*'
+    );
+  }, []);
+
+  const toggleMute = () => {
+    setIsMuted(prev => {
+      sendYTCommand(prev ? 'unMute' : 'mute');
+      return !prev;
+    });
+  };
 
   const handleCopy = (text?: string) => {
     if (!text) return;
@@ -232,6 +275,43 @@ export default function ElegantWeddingTemplate({ invitationId, custom_data }: Pr
 
   return (
     <div style={{ ...darkBg, fontFamily: 'Lora, serif', color: '#d4bfa0' }}>
+
+      {/* ── Hidden YouTube Background Music Player ── */}
+      {videoId && (
+        <iframe
+          ref={playerRef}
+          src={`https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}&controls=0&mute=0&enablejsapi=1&origin=${typeof window !== 'undefined' ? window.location.origin : ''}`}
+          allow="autoplay"
+          className="absolute w-0 h-0 opacity-0 pointer-events-none"
+          style={{ position: 'fixed', top: '-9999px', left: '-9999px' }}
+          title="background-music"
+        />
+      )}
+
+      {/* ── Floating Music Toggle Button ── */}
+      {videoId && (
+        <button
+          onClick={toggleMute}
+          className="fixed bottom-6 right-6 z-[999] w-12 h-12 rounded-full flex items-center justify-center transition-all hover:scale-110 active:scale-95 shadow-2xl"
+          style={{ background: 'linear-gradient(135deg, #c9a84c, #e8c96e)', boxShadow: '0 4px 20px rgba(201,168,76,0.45)' }}
+          title={isMuted ? 'Unmute music' : 'Mute music'}
+        >
+          {isMuted ? (
+            /* Muted icon */
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0d1b2a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+              <line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>
+            </svg>
+          ) : (
+            /* Sound on icon */
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0d1b2a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+              <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+            </svg>
+          )}
+        </button>
+      )}
 
       {/* Hero */}
       <section className="relative">
