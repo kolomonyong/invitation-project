@@ -44,6 +44,7 @@ export default function EditorPage() {
         console.error('Error fetching template structure:', error)
         toast.error("Sorry, we couldn't find that template.");
         router.push('/dashboard')
+        return;
       } else {
         setTemplateStructure(data.structure_json);
         const initialFormData: { [key: string]: string } = {};
@@ -54,6 +55,20 @@ export default function EditorPage() {
         });
         setFormData(initialFormData);
       }
+
+      // Check quota before allowing them to edit
+      const { data: invData } = await supabase.from('invitations').select('id', { count: 'exact' }).eq('user_id', user.id);
+      const { data: quotaData } = await supabase.from('user_quotas').select('free_quota, purchased_quota').eq('user_id', user.id).single();
+      
+      const used = invData?.length || 0;
+      const total = quotaData ? (quotaData.free_quota + quotaData.purchased_quota) : 0;
+      
+      if (used >= total) {
+        toast.error("You have reached your invitation quota limit. Please purchase more from the dashboard.");
+        router.push('/dashboard');
+        return;
+      }
+
       setLoading(false);
     }
     
@@ -154,6 +169,9 @@ export default function EditorPage() {
         const { error: insertError } = await supabase.from('invitations').insert([newInvitation]);
 
         if (insertError) {
+          if (insertError.message.includes('QUOTA_EXCEEDED')) {
+            throw new Error("You have reached your quota limit. Please purchase more from the dashboard.");
+          }
           throw insertError;
         }
     };

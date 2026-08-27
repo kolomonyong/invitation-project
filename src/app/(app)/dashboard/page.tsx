@@ -321,43 +321,63 @@ function InvitationCard({
 }
 
 // ─── Template Card ────────────────────────────────────────────────────────────
-function TemplateCard({ template }: { template: Template }) {
-  return (
-    <Link href={`/editor/${template.id}`} className="group block">
-      <div
-        className="rounded-2xl border bg-white overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5"
-        style={{ borderColor: 'var(--border)' }}
-        onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = 'var(--primary)'}
-        onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = 'var(--border)'}
-      >
-        <div className="relative aspect-video overflow-hidden bg-muted">
-          <Image
-            src={template.preview_image_url}
-            alt={template.name}
-            fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            className="object-cover group-hover:scale-105 transition-transform duration-500"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
-            <span className="px-4 py-2 bg-white rounded-full text-sm font-bold shadow-lg" style={{ color: 'var(--primary)' }}>
-              Use Template →
-            </span>
-          </div>
-        </div>
-        <div className="p-4 flex items-center justify-between gap-3">
-          <div className="min-w-0">
-            <h3 className="font-bold text-sm truncate" style={{ color: 'var(--foreground)' }}>{template.name}</h3>
-            <p className="text-xs capitalize mt-0.5" style={{ color: 'var(--secondary)' }}>{template.category}</p>
-          </div>
-          <div
-            className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 group-hover:scale-110"
-            style={{ background: 'var(--primary-light)' }}
-          >
-            <SparkleIcon className="w-4 h-4" style={{ color: 'var(--primary)' }} />
-          </div>
+function TemplateCard({ 
+  template, 
+  hasQuota, 
+  onQuotaExceeded 
+}: { 
+  template: Template, 
+  hasQuota: boolean, 
+  onQuotaExceeded: () => void 
+}) {
+  const CardContent = (
+    <div
+      className="rounded-2xl border bg-white overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 w-full text-left"
+      style={{ borderColor: 'var(--border)' }}
+      onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = 'var(--primary)'}
+      onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = 'var(--border)'}
+    >
+      <div className="relative aspect-video overflow-hidden bg-muted">
+        <Image
+          src={template.preview_image_url}
+          alt={template.name}
+          fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          className="object-cover group-hover:scale-105 transition-transform duration-500"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
+          <span className="px-4 py-2 bg-white rounded-full text-sm font-bold shadow-lg" style={{ color: 'var(--primary)' }}>
+            Use Template →
+          </span>
         </div>
       </div>
+      <div className="p-4 flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <h3 className="font-bold text-sm truncate" style={{ color: 'var(--foreground)' }}>{template.name}</h3>
+          <p className="text-xs capitalize mt-0.5" style={{ color: 'var(--secondary)' }}>{template.category}</p>
+        </div>
+        <div
+          className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 group-hover:scale-110"
+          style={{ background: 'var(--primary-light)' }}
+        >
+          <SparkleIcon className="w-4 h-4" style={{ color: 'var(--primary)' }} />
+        </div>
+      </div>
+    </div>
+  );
+
+  if (!hasQuota) {
+    return (
+      <button onClick={onQuotaExceeded} className="group block w-full">
+        {CardContent}
+      </button>
+    );
+  }
+
+  return (
+    <Link href={`/editor/${template.id}`} className="group block w-full">
+      {CardContent}
     </Link>
   );
 }
