@@ -8,6 +8,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { QRCodeSVG } from 'qrcode.react';
 import toast from 'react-hot-toast';
+import PurchaseModal from '@/components/PurchaseModal';
+import QuotaBar from '@/components/QuotaBar';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 type Template = {
@@ -484,7 +486,14 @@ export default function Dashboard() {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
+  // Quota state
+  const [quota, setQuota] = useState<{ free_quota: number; purchased_quota: number }>({ free_quota: 1, purchased_quota: 0 });
+  const [showPurchaseModal, setShowPurchaseModal] = useState(false);
+
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://invitation-project-ten.vercel.app';
+  const totalQuota = quota.free_quota + quota.purchased_quota;
+  const quotaUsed = myInvitations.length;
+  const hasQuota = quotaUsed < totalQuota;
 
   // Auth check + data fetch
   useEffect(() => {
@@ -493,16 +502,24 @@ export default function Dashboard() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) { router.push('/login'); return; }
 
-      const [{ data: tplData }, { data: invData, error: invError }] = await Promise.all([
-        supabase.from('templates').select('*'),
+      const [tplResponse, { data: invData, error: invError }, { data: quotaData }] = await Promise.all([
+        fetch('/api/templates'),
         supabase
           .from('invitations')
           .select('id, created_at, templates ( name, preview_image_url, category )')
           .eq('user_id', user.id)
           .order('created_at', { ascending: false }),
+        supabase
+          .from('user_quotas')
+          .select('free_quota, purchased_quota')
+          .eq('user_id', user.id)
+          .single(),
       ]);
 
-      if (tplData) setTemplates(tplData);
+      if (tplResponse.ok) {
+        const tplData = await tplResponse.json();
+        setTemplates(tplData);
+      }
       if (invError) {
         console.error('Error fetching invitations:', invError);
       } else if (invData) {
@@ -511,6 +528,9 @@ export default function Dashboard() {
           templates: Array.isArray(inv.templates) ? inv.templates[0] : inv.templates,
         }));
         setMyInvitations(normalized as Invitation[]);
+      }
+      if (quotaData) {
+        setQuota({ free_quota: quotaData.free_quota, purchased_quota: quotaData.purchased_quota });
       }
       setLoading(false);
     };
@@ -545,11 +565,39 @@ export default function Dashboard() {
   // Unique categories for filter
   const categories = [...new Set(myInvitations.map(inv => inv.templates?.category).filter(Boolean))];
 
+  // Quota check handler for template selection
+  const handleTemplateClick = useCallback((templateId: number) => {
+    if (hasQuota) {
+      router.push(`/editor/${templateId}`);
+    } else {
+      setShowPurchaseModal(true);
+    }
+  }, [hasQuota, router]);
+
+  // Purchase success callback
+  const handlePurchaseSuccess = useCallback(() => {
+    setShowPurchaseModal(false);
+    // Refresh quota data
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) {
+        supabase
+          .from('user_quotas')
+          .select('free_quota, purchased_quota')
+          .eq('user_id', user.id)
+          .single()
+          .then(({ data }) => {
+            if (data) setQuota({ free_quota: data.free_quota, purchased_quota: data.purchased_quota });
+          });
+      }
+    });
+    toast.success('Quota added successfully! You can now create a new invitation.');
+  }, [supabase]);
+
   // Stats
   const stats = [
     { icon: EnvelopeIcon, label: 'Total Invitations', value: myInvitations.length, accent: '#6C63FF' },
     { icon: UsersIcon, label: 'Templates Available', value: templates.length, accent: '#10B981' },
-    { icon: LayoutIcon, label: 'Filtered Results', value: filteredInvitations.length, accent: '#F59E0B' },
+    { icon: LayoutIcon, label: 'Quota Remaining', value: `${Math.max(totalQuota - quotaUsed, 0)}/${totalQuota}`, accent: '#F59E0B' },
     { icon: SparkleIcon, label: 'Active Invitations', value: myInvitations.length, accent: '#8B5CF6', badge: myInvitations.length > 0 ? 'Live' : undefined },
   ];
 
@@ -584,10 +632,19 @@ export default function Dashboard() {
       </div>
 
       {/* ─── Stats Grid ──────────────────────────────────────────────── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
         {stats.map(s => (
           <StatCard key={s.label} {...s} />
         ))}
+      </div>
+
+      {/* ─── Quota Bar ────────────────────────────────────────────────── */}
+      <div className="mb-8">
+        <QuotaBar
+          used={quotaUsed}
+          total={totalQuota}
+          onUpgrade={() => setShowPurchaseModal(true)}
+        />
       </div>
 
       {/* ─── Invitations Section ─────────────────────────────────────── */}
@@ -712,7 +769,11 @@ export default function Dashboard() {
           </div>
         ) : templates.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-            {templates.map(t => <TemplateCard key={t.id} template={t} />)}
+            {templates.map(t => (
+              <div key={t.id} onClick={() => handleTemplateClick(t.id)} className="cursor-pointer">
+                <TemplateCard template={t} />
+              </div>
+            ))}
           </div>
         ) : (
           <div
@@ -738,6 +799,13 @@ export default function Dashboard() {
           onConfirm={handleDeleteConfirm}
           onCancel={() => setDeleteId(null)}
           isDeleting={isDeleting}
+        />
+      )}
+
+      {showPurchaseModal && (
+        <PurchaseModal
+          onClose={() => setShowPurchaseModal(false)}
+          onSuccess={handlePurchaseSuccess}
         />
       )}
     </div>

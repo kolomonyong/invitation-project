@@ -3,7 +3,9 @@
 
 import { createServerClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
+import { headers } from 'next/headers';
 import { z } from 'zod';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 // Define the shape of our form data with Zod for validation
 const RsvpSchema = z.object({
@@ -14,13 +16,29 @@ const RsvpSchema = z.object({
   notes: z.string().optional(),
 });
 
+export type RsvpFormState = {
+  message?: string;
+  errors?: {
+    invitation_id?: string[];
+    guest_name?: string[];
+    is_attending?: string[];
+    guest_count?: string[];
+    notes?: string[];
+  };
+};
+
 export async function submitRsvp(
-  prevState: { 
-    message?: string; 
-    errors?: Record<string, string[]> 
-  }, 
+  prevState: RsvpFormState,
   formData: FormData
-) {
+): Promise<RsvpFormState> {
+  // Apply rate limiting
+  const headersList = await headers();
+  const ip = headersList.get('x-forwarded-for') || 'unknown';
+  const rateLimitResult = checkRateLimit(ip);
+  if (!rateLimitResult.success) {
+    return { message: rateLimitResult.message, errors: {} };
+  }
+
   const supabase = await createServerClient();
 
   // Extract and validate the form data

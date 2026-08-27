@@ -1,5 +1,6 @@
-import { createClient } from '@supabase/supabase-js';
 import { notFound } from 'next/navigation';
+import type { Metadata } from 'next';
+import { getCachedInvitation } from '@/lib/cache';
 
 // --- vvv IMPORT OUR NEW TEMPLATE vvv ---
 import BirthdayTemplate1 from '@/components/templates/BirthdayTemplate1';
@@ -19,25 +20,64 @@ type Props = {
   }>;
 };
 
+// ─── SEO / Open Graph Metadata ───────────────────────────────────────────────
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const { id } = await props.params;
+  const data = await getCachedInvitation(id);
+
+  const templateInfo = Array.isArray(data?.templates)
+    ? data?.templates[0]
+    : data?.templates;
+
+  const eventName: string =
+    data?.custom_data?.bride_name && data?.custom_data?.groom_name
+      ? `${data.custom_data.bride_name} & ${data.custom_data.groom_name}`
+      : data?.custom_data?.title || templateInfo?.name || 'You\'re Invited!';
+
+  const eventDate: string = data?.custom_data?.date
+    ? ` on ${data.custom_data.date}`
+    : '';
+
+  const description = `You are cordially invited to celebrate ${eventName}${eventDate}. Open to see the full invitation and RSVP.`;
+  const ogImage = templateInfo?.preview_image_url || '/og-default.png';
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://invitation-project-ten.vercel.app';
+
+  return {
+    title: `${eventName} — Digital Invitation`,
+    description,
+    openGraph: {
+      title: `${eventName} — Digital Invitation`,
+      description,
+      url: `${siteUrl}/invite/${id}`,
+      type: 'website',
+      images: [
+        {
+          url: ogImage,
+          width: 1200,
+          height: 630,
+          alt: eventName,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${eventName} — Digital Invitation`,
+      description,
+      images: [ogImage],
+    },
+  };
+}
+
+
+
 export default async function InvitePage(props: Props) {
-  // Use standard client without cookies since public invitations don't need auth.
-  // This avoids Next.js 15 async cookies() crashes with the old auth-helpers package.
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
-  
   // Await params in Next.js 15
   const { id } = await props.params;
 
-  const { data: invitationData, error } = await supabase
-    .from('invitations')
-    .select('custom_data, template_id')
-    .eq('id', id)
-    .single();
+  const invitationData = await getCachedInvitation(id);
 
-  if (error || !invitationData) {
-    console.error("Error fetching invitation:", error);
+  if (!invitationData) {
+    console.error("Error fetching invitation:", id);
     notFound();
   }
   

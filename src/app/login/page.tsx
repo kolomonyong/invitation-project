@@ -1,9 +1,9 @@
-// src/app/page.tsx
+// src/app/login/page.tsx
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, Suspense } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 // ─── Shared icon prop type ────────────────────────────────────────────────────
 type IconProps = { className?: string; style?: React.CSSProperties }
@@ -145,7 +145,7 @@ function FloatingInput({
 }
 
 // ─── Main Login Page ──────────────────────────────────────────────────────────
-export default function LoginPage() {
+function LoginPageContent() {
   const supabase = createClient()
   const router = useRouter()
 
@@ -157,6 +157,15 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
   const [mode, setMode] = useState<'login' | 'signup'>('login')
   const [successMsg, setSuccessMsg] = useState<string | null>(null)
+  const [expiredSession, setExpiredSession] = useState(false)
+
+  // Detect session-expired redirect from proxy.ts / idle timer
+  const searchParams = useSearchParams()
+  useEffect(() => {
+    if (searchParams.get('expired') === 'true') {
+      setExpiredSession(true)
+    }
+  }, [searchParams])
 
   // Redirect if already logged in
   useEffect(() => {
@@ -330,6 +339,19 @@ export default function LoginPage() {
               </div>
             )}
 
+            {/* Session Expired Banner */}
+            {expiredSession && (
+              <div
+                className="flex items-start gap-2.5 px-4 py-3 rounded-xl text-sm font-medium animate-fade-in"
+                style={{ background: '#FEF3C7', color: '#92400E' }}
+              >
+                <svg className="w-4 h-4 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd"/>
+                </svg>
+                <span>Your session has expired due to inactivity. Please sign in again.</span>
+              </div>
+            )}
+
             {/* Error Message */}
             {error && (
               <div className="flex items-start gap-2.5 px-4 py-3 rounded-xl text-sm font-medium animate-fade-in" style={{ background: 'var(--error-light)', color: 'var(--error)' }}>
@@ -349,6 +371,7 @@ export default function LoginPage() {
                 <span>{successMsg}</span>
               </div>
             )}
+
 
             {/* Submit Button */}
             <button
@@ -499,5 +522,14 @@ export default function LoginPage() {
       </div>
 
     </div>
+  )
+}
+
+// Wrap in Suspense because useSearchParams requires it in Next.js App Router
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginPageContent />
+    </Suspense>
   )
 }

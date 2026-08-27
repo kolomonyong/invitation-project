@@ -5,20 +5,8 @@
 import { useActionState, useEffect } from 'react';
 import { useFormStatus } from 'react-dom';
 // --- ^^^ CHANGE IS HERE ^^^ ---
-import { submitRsvp } from '@/app/actions';
+import { submitRsvp, type RsvpFormState } from '@/app/actions';
 import toast from 'react-hot-toast';
-
-// This type definition remains the same
-type RsvpFormState = {
-  message: string;
-  errors?: {
-    invitation_id?: string[];
-    guest_name?: string[];
-    is_attending?: string[];
-    guest_count?: string[];
-    notes?: string[];
-  };
-};
 
 function SubmitButton() {
   const { pending } = useFormStatus();
