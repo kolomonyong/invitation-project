@@ -64,19 +64,31 @@ export default function QuotaBar({
       </div>
 
       {/* Status text and CTA */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-3 flex-wrap">
         <span className="text-xs" style={{ color: 'var(--secondary)' }}>
           {isExhausted
-            ? 'Kuota habis!'
-            : `${remaining} invitation remaining`}
+            ? '⚠️ Kuota habis! Beli kuota untuk membuat undangan baru.'
+            : `${remaining} undangan tersisa · Rp10.000 / undangan tambahan`}
         </span>
-        {isExhausted && (
+        {isExhausted ? (
           <button
             onClick={onUpgrade}
-            className="text-xs font-bold px-3 py-1 rounded-full cursor-pointer transition-opacity hover:opacity-90"
-            style={{ background: 'var(--primary)', color: 'white' }}
+            className="text-xs font-bold px-4 py-1.5 rounded-full cursor-pointer transition-all duration-200 hover:opacity-90 shrink-0 animate-pulse"
+            style={{ background: 'var(--warning, #F59E0B)', color: 'white' }}
           >
-            + Tambah
+            🛒 Tambah Sekarang
+          </button>
+        ) : (
+          <button
+            onClick={onUpgrade}
+            className="text-xs font-semibold px-3 py-1.5 rounded-full cursor-pointer transition-all duration-200 hover:opacity-80 shrink-0"
+            style={{
+              border: '1.5px solid var(--primary)',
+              color: 'var(--primary)',
+              background: 'transparent',
+            }}
+          >
+            + Beli Lebih
           </button>
         )}
       </div>
