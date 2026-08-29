@@ -1,12 +1,23 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'motion/react';
 import RsvpForm from '../RsvpForm';
 import YouTube from 'react-youtube';
 import { InView, InViewSlideLeft, InViewSlideRight, InViewScale } from '@/components/motion/in-view';
 import { TextEffect } from '@/components/motion/text-effect';
+
+// Helper to extract YouTube ID from full URL or just return the ID
+const extractYouTubeId = (url: string | undefined): string | null => {
+  if (!url) return null;
+  // If it's just an 11-character ID, return it
+  if (/^[a-zA-Z0-9_-]{11}$/.test(url)) return url;
+  
+  // Try to match standard YouTube URLs
+  const match = url.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+  return match ? match[1] : null;
+};
 
 // Define the shape of the data this component expects
 type NetflixTemplateProps = {
@@ -44,6 +55,8 @@ export default function NetflixTemplate({ invitationId, custom_data }: NetflixTe
     custom_data.galleryPhoto1, custom_data.galleryPhoto2, custom_data.galleryPhoto3,
     custom_data.galleryPhoto4, custom_data.galleryPhoto5, custom_data.galleryPhoto6,
   ].filter(Boolean) as string[];
+
+  const trailerId = useMemo(() => extractYouTubeId(custom_data.youtubeTrailerId), [custom_data.youtubeTrailerId]);
 
   if (!isOpen) {
     // --- COVER PAGE ---
@@ -230,20 +243,21 @@ export default function NetflixTemplate({ invitationId, custom_data }: NetflixTe
             </div>
         </section>
 
-        {custom_data.youtubeTrailerId && (
+        {trailerId && (
             <section className="p-8 md:p-16 max-w-6xl mx-auto">
                 <InView>
                     <h3 className="font-bebas text-4xl mb-8">Official Trailer</h3>
                 </InView>
                 <InViewScale transition={{ duration: 0.6 }}>
-                    <div className="aspect-video rounded-xl overflow-hidden shadow-2xl border border-gray-800">
+                    <div className="aspect-video rounded-xl overflow-hidden shadow-2xl border border-gray-800 pointer-events-auto">
                         <YouTube 
-                        videoId={custom_data.youtubeTrailerId} 
+                        videoId={trailerId} 
                         opts={{
                             width: '100%',
                             height: '100%',
                             playerVars: {
-                            autoplay: 0,
+                            autoplay: 1, // Enable autoplay
+                            mute: 1,     // Mute is often required by browsers for autoplay to work
                             controls: 1,
                             },
                         }}
@@ -271,9 +285,10 @@ export default function NetflixTemplate({ invitationId, custom_data }: NetflixTe
                                 src={photo} 
                                 alt={`Scene ${index + 1}`} 
                                 fill
-                                className="object-cover group-hover:brightness-110 transition-all"
+                                className="object-cover md:group-hover:brightness-110 transition-all"
                                 />
-                                <div className="absolute inset-0 bg-black/50 group-hover:bg-transparent transition-colors duration-300"></div>
+                                {/* Mobile transparent, Desktop overlay with hover clear */}
+                                <div className="absolute inset-0 bg-transparent md:bg-black/50 md:group-hover:bg-transparent transition-colors duration-300"></div>
                             </motion.div>
                         </InView>
                         ))}
