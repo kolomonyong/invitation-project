@@ -2,8 +2,25 @@
 'use client'
 
 import Link from 'next/link'
+import { useState, useEffect } from 'react'
+
+const WEDDING_PHOTOS = [
+  '/wedding-gallery/wedding-1.jpg',
+  '/wedding-gallery/wedding-2.jpg',
+  '/wedding-gallery/wedding-3.jpg',
+  '/wedding-gallery/wedding-4.jpg',
+]
 
 export default function LandingPage() {
+  const [currentSlide, setCurrentSlide] = useState(0)
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide(prev => (prev + 1) % WEDDING_PHOTOS.length)
+    }, 4500)
+    return () => clearInterval(timer)
+  }, [])
+
   return (
     <div className="min-h-screen bg-white overflow-x-hidden font-lexend-deca">
 
@@ -29,36 +46,68 @@ export default function LandingPage() {
 
       <main className="pt-[80px]">
         {/* ─── Hero Section ─────────────────────────────────────────────────────── */}
-        <section className="relative px-6 py-20 lg:py-32 flex flex-col items-center text-center overflow-hidden">
-          {/* Background decorations */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-indigo-500/10 rounded-full blur-[100px] -z-10" />
+        <section className="relative min-h-[calc(100vh-80px)] flex flex-col items-center justify-center text-center overflow-hidden">
 
-          <div className="inline-flex items-center gap-2.5 rounded-full px-4 py-2 mb-8 bg-indigo-50 border border-indigo-100 text-indigo-600 animate-slide-up">
-            <span className="flex h-2 w-2 rounded-full bg-indigo-600 animate-pulse" />
-            <span className="text-sm font-semibold tracking-wide">The New Standard for Invitations</span>
+          {/* ── Background Carousel ── */}
+          {WEDDING_PHOTOS.map((src, i) => (
+            <div
+              key={src}
+              className="absolute inset-0 bg-cover bg-center transition-opacity duration-1000"
+              style={{ backgroundImage: `url(${src})`, opacity: i === currentSlide ? 1 : 0 }}
+            />
+          ))}
+
+          {/* Dark gradient overlay so text stays readable */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70 z-10" />
+
+
+          {/* Content */}
+          <div className="relative z-20 px-6 py-20">
+            <div className="inline-flex items-center gap-2.5 rounded-full px-4 py-2 mb-8 bg-white/10 border border-white/20 text-white backdrop-blur-sm animate-slide-up">
+              <span className="flex h-2 w-2 rounded-full bg-white animate-pulse" />
+              <span className="text-sm font-semibold tracking-wide">The New Standard for Invitations</span>
+            </div>
+
+            <h1 className="text-5xl lg:text-7xl font-bold text-white leading-tight tracking-tight max-w-4xl mb-6 animate-slide-up animation-delay-200 drop-shadow-2xl">
+              Craft Invitations <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-purple-300">
+                Worth Remembering
+              </span>
+            </h1>
+
+            <p className="text-lg lg:text-xl text-white/80 max-w-2xl mb-10 animate-slide-up animation-delay-400 drop-shadow-md">
+              Design stunning digital invitations for your most precious moments—weddings, birthdays, and celebrations. Share instantly and track RSVPs with ease.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center animate-slide-up animation-delay-600">
+              <Link href="/login" className="px-8 py-4 rounded-full text-white font-bold text-lg flex items-center justify-center gap-2 hover:scale-105 transition-transform shadow-xl shadow-indigo-500/40" style={{ background: 'var(--primary)' }}>
+                Create Your Invitation
+                <svg className="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                </svg>
+              </Link>
+              <Link href="#templates" className="px-8 py-4 rounded-full font-bold text-lg flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm transition-colors border border-white/30 text-white">
+                View Templates
+              </Link>
+            </div>
+
+            {/* Carousel dots */}
+            <div className="flex gap-2 justify-center mt-10">
+              {WEDDING_PHOTOS.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setCurrentSlide(i)}
+                  className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${i === currentSlide ? 'bg-white scale-125' : 'bg-white/40'}`}
+                />
+              ))}
+            </div>
           </div>
 
-          <h1 className="text-5xl lg:text-7xl font-bold text-foreground leading-tight tracking-tight max-w-4xl mb-6 animate-slide-up animation-delay-200">
-            Craft Invitations <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-500">
-              Worth Remembering
-            </span>
-          </h1>
-
-          <p className="text-lg lg:text-xl text-secondary max-w-2xl mb-10 animate-slide-up animation-delay-400">
-            Design stunning digital invitations for your most precious moments—weddings, birthdays, and celebrations. Share instantly and track RSVPs with ease.
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 animate-slide-up animation-delay-600">
-            <Link href="/login" className="px-8 py-4 rounded-full text-white font-bold text-lg flex items-center justify-center gap-2 hover:scale-105 transition-transform shadow-xl shadow-indigo-500/30" style={{ background: 'var(--primary)' }}>
-              Create Your Invitation
-              <svg className="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-              </svg>
-            </Link>
-            <Link href="#templates" className="px-8 py-4 rounded-full font-bold text-lg flex items-center justify-center gap-2 hover:bg-muted transition-colors border border-border text-foreground">
-              View Templates
-            </Link>
+          {/* Scroll indicator */}
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 animate-bounce">
+            <svg className="w-6 h-6 text-white/60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
           </div>
         </section>
 
