@@ -320,7 +320,7 @@ export default function NetflixTemplate({ invitationId, custom_data }: NetflixTe
                     </InView>
                     <InViewScale>
                         <div className="bg-[#141414] border border-gray-800 p-8 rounded-xl text-left">
-                            <RsvpForm invitationId={invitationId} />
+                            <RsvpForm invitationId={invitationId} theme="dark" />
                         </div>
                     </InViewScale>
                 </section>

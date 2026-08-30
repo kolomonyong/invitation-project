@@ -557,7 +557,7 @@ export default function ElegantWeddingTemplate({ invitationId, custom_data }: Pr
             <p className="text-center text-xs uppercase tracking-[0.35em] mb-2" style={{ color: '#c9a84c' }}>Konfirmasi Kehadiran</p>
             <h2 className="text-center text-3xl italic mb-10" style={{ fontFamily: 'Cormorant Garamond, serif', color: '#e8c96e' }}>RSVP</h2>
             <div className="max-w-lg mx-auto">
-              <RsvpForm invitationId={invitationId} />
+              <RsvpForm invitationId={invitationId} theme="dark" />
             </div>
           </InView>
         </section>
