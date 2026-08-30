@@ -161,13 +161,29 @@ export default function NetflixTemplate({ invitationId, custom_data }: NetflixTe
             </div>
         </section>
 
-        <section className="bg-red-600 text-black font-bebas text-2xl py-3 overflow-hidden whitespace-nowrap shadow-[0_0_20px_rgba(220,38,38,0.5)]">
-            <div className="animate-marquee inline-block">
-                <span className="mx-8">BREAKING NEWS: {custom_data.coupleNames} ARE GETTING MARRIED!</span>
-                <span className="mx-8">SAVE THE DATE: {new Date(custom_data.eventDate || '').toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
-                <span className="mx-8">BREAKING NEWS: {custom_data.coupleNames} ARE GETTING MARRIED!</span>
-                <span className="mx-8">SAVE THE DATE: {new Date(custom_data.eventDate || '').toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
-            </div>
+        <section className="bg-red-600 text-black font-bebas text-2xl py-3 overflow-hidden whitespace-nowrap shadow-[0_0_20px_rgba(220,38,38,0.5)] flex">
+            <motion.div 
+                className="flex whitespace-nowrap"
+                animate={{ x: ["0%", "-50%"] }}
+                transition={{ 
+                    repeat: Infinity, 
+                    duration: 15, 
+                    ease: "linear" 
+                }}
+            >
+                <div className="flex px-4">
+                    <span className="mx-8">BREAKING NEWS: {custom_data.coupleNames} ARE GETTING MARRIED!</span>
+                    <span className="mx-8">SAVE THE DATE: {new Date(custom_data.eventDate || '').toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                    <span className="mx-8">BREAKING NEWS: {custom_data.coupleNames} ARE GETTING MARRIED!</span>
+                    <span className="mx-8">SAVE THE DATE: {new Date(custom_data.eventDate || '').toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                </div>
+                <div className="flex px-4">
+                    <span className="mx-8">BREAKING NEWS: {custom_data.coupleNames} ARE GETTING MARRIED!</span>
+                    <span className="mx-8">SAVE THE DATE: {new Date(custom_data.eventDate || '').toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                    <span className="mx-8">BREAKING NEWS: {custom_data.coupleNames} ARE GETTING MARRIED!</span>
+                    <span className="mx-8">SAVE THE DATE: {new Date(custom_data.eventDate || '').toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                </div>
+            </motion.div>
         </section>
 
         <section className="p-8 md:p-16 max-w-6xl mx-auto border-b border-gray-800">
