@@ -223,7 +223,7 @@ function LoginPageContent() {
       {/* ─── Top Nav ──────────────────────────────────────────────────────── */}
       <nav className="fixed top-0 left-0 right-0 h-[68px] bg-white/90 backdrop-blur-md border-b border-border z-50 flex items-center px-5 md:px-8 justify-between lg:hidden">
         <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style={{ background: 'linear-gradient(135deg, var(--primary), #A78BFA)' }}>
+          <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style={{ background: 'var(--primary)' }}>
             <SparkleIcon className="w-5 h-5 text-white" />
           </div>
           <span className="font-bold text-base text-foreground tracking-tight">Invitations</span>
@@ -239,7 +239,7 @@ function LoginPageContent() {
 
           {/* Desktop Logo */}
           <div className="hidden lg:flex items-center gap-2.5 mb-12">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: 'linear-gradient(135deg, var(--primary), #A78BFA)' }}>
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: 'var(--primary)' }}>
               <SparkleIcon className="w-5 h-5 text-white" />
             </div>
             <span className="font-bold text-lg text-foreground tracking-tight">Digital Invitations</span>
@@ -382,8 +382,8 @@ function LoginPageContent() {
               style={{
                 background: isSubmitting
                   ? 'var(--primary)'
-                  : 'linear-gradient(135deg, var(--primary) 0%, #8B5CF6 100%)',
-                boxShadow: isSubmitting ? 'none' : '0 4px 20px -4px rgba(108,99,255,0.5)',
+                  : 'var(--primary)',
+                boxShadow: isSubmitting ? 'none' : '0 4px 20px -4px rgba(139,26,26,0.5)',
                 transform: 'translateY(0)',
               }}
               onMouseEnter={e => {
@@ -426,7 +426,7 @@ function LoginPageContent() {
       {/* ─── Right: Decorative Panel ─────────────────────────────────────── */}
       <div
         className="hidden lg:flex lg:w-[48%] xl:w-[52%] relative flex-col justify-between p-12 overflow-hidden"
-        style={{ background: 'linear-gradient(145deg, #1a1033 0%, #2d1b69 40%, #4c1d95 100%)' }}
+        style={{ background: 'linear-gradient(145deg, #2D0000 0%, #5C0A0A 40%, #8B1A1A 100%)' }}
       >
         {/* Animated orbs */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -435,7 +435,7 @@ function LoginPageContent() {
             style={{
               width: 380, height: 380,
               top: '-8%', right: '-10%',
-              background: 'radial-gradient(circle, rgba(139,92,246,0.35) 0%, transparent 70%)',
+              background: 'radial-gradient(circle, rgba(197,48,48,0.35) 0%, transparent 70%)',
             }}
           />
           <div
@@ -443,7 +443,7 @@ function LoginPageContent() {
             style={{
               width: 280, height: 280,
               bottom: '5%', left: '-8%',
-              background: 'radial-gradient(circle, rgba(108,99,255,0.3) 0%, transparent 70%)',
+              background: 'radial-gradient(circle, rgba(139,26,26,0.3) 0%, transparent 70%)',
             }}
           />
           <div
@@ -451,7 +451,7 @@ function LoginPageContent() {
             style={{
               width: 160, height: 160,
               top: '38%', left: '55%',
-              background: 'radial-gradient(circle, rgba(167,139,250,0.2) 0%, transparent 70%)',
+              background: 'radial-gradient(circle, rgba(220,38,38,0.2) 0%, transparent 70%)',
             }}
           />
           {/* Subtle grid pattern */}
@@ -475,7 +475,7 @@ function LoginPageContent() {
 
           <h2 className="text-4xl xl:text-5xl font-bold text-white leading-tight mb-4">
             Craft Invitations<br />
-            <span style={{ background: 'linear-gradient(90deg, #A78BFA, #C4B5FD)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+            <span style={{ background: 'linear-gradient(90deg, #FCA5A5, #FECACA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
               Worth Remembering
             </span>
           </h2>

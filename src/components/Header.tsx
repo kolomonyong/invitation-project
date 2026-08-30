@@ -20,7 +20,7 @@ export default function Header() {
   return (
     <header className="bg-white shadow-md">
       <nav className="container mx-auto px-8 py-4 flex justify-between items-center">
-        <Link href="/dashboard" className="text-2xl font-bold text-purple-600 hover:text-purple-800">
+        <Link href="/dashboard" className="text-2xl font-bold text-red-800 hover:text-purple-800">
           Digital Invitations
         </Link>
         <button

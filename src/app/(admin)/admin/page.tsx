@@ -97,7 +97,7 @@ export default function AdminDashboardPage() {
                   {new Date(template.created_at).toLocaleDateString()}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <Link href={`/admin/templates/edit/${template.id}`} className="text-indigo-600 hover:text-indigo-900 mr-4">
+                  <Link href={`/admin/templates/edit/${template.id}`} className="text-red-800 hover:text-indigo-900 mr-4">
                     Edit
                   </Link>
                   {/* Add the onClick handler to the delete button */}

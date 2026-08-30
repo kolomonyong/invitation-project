@@ -236,7 +236,7 @@ export default function PurchaseModal({
                 disabled={loading}
                 className="w-full py-3 rounded-full font-bold text-white cursor-pointer flex items-center justify-center gap-2 transition-opacity hover:opacity-90"
                 style={{
-                  background: 'linear-gradient(135deg, var(--primary), #8B5CF6)',
+                  background: 'var(--primary)',
                   opacity: loading ? 0.7 : 1,
                 }}
               >

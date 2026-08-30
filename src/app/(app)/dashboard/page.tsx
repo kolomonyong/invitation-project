@@ -615,10 +615,10 @@ export default function Dashboard() {
 
   // Stats
   const stats = [
-    { icon: EnvelopeIcon, label: 'Total Invitations', value: myInvitations.length, accent: '#6C63FF' },
+    { icon: EnvelopeIcon, label: 'Total Invitations', value: myInvitations.length, accent: '#8B1A1A' },
     { icon: UsersIcon, label: 'Templates Available', value: templates.length, accent: '#10B981' },
     { icon: LayoutIcon, label: 'Quota Remaining', value: `${Math.max(totalQuota - quotaUsed, 0)}/${totalQuota}`, accent: '#F59E0B' },
-    { icon: SparkleIcon, label: 'Active Invitations', value: myInvitations.length, accent: '#8B5CF6', badge: myInvitations.length > 0 ? 'Live' : undefined },
+    { icon: SparkleIcon, label: 'Active Invitations', value: myInvitations.length, accent: '#8B1A1A', badge: myInvitations.length > 0 ? 'Live' : undefined },
   ];
 
   return (
@@ -639,7 +639,7 @@ export default function Dashboard() {
             href="#templates"
             className="flex items-center gap-2 px-5 py-3 rounded-full font-bold text-sm text-white transition-all duration-300 cursor-pointer shadow-sm"
             style={{
-              background: 'linear-gradient(135deg, var(--primary) 0%, #8B5CF6 100%)',
+              background: 'linear-gradient(135deg, var(--primary) 0%, #8B1A1A 100%)',
               boxShadow: '0 4px 16px -4px rgba(108,99,255,0.45)',
             }}
             onMouseEnter={e => (e.currentTarget as HTMLElement).style.opacity = '0.9'}

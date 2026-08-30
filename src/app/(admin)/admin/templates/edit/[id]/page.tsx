@@ -183,7 +183,7 @@ export default function EditTemplatePage() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full bg-indigo-600 hover:bg-indigo-800 text-white font-bold py-2 px-4 rounded disabled:bg-gray-400"
+          className="w-full bg-red-800 hover:bg-indigo-800 text-white font-bold py-2 px-4 rounded disabled:bg-gray-400"
         >
           {isSubmitting ? "Updating..." : "Update Template"}
         </button>

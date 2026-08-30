@@ -72,7 +72,7 @@ export default function PricingPage() {
           <Link href="/" className="flex items-center gap-2.5">
             <div
               className="w-9 h-9 rounded-xl flex items-center justify-center"
-              style={{ background: 'linear-gradient(135deg, var(--primary), #A78BFA)' }}
+              style={{ background: 'var(--primary)' }}
             >
               <SparkleIcon />
             </div>
@@ -81,7 +81,7 @@ export default function PricingPage() {
           <Link
             href="/login"
             className="px-5 py-2.5 rounded-full font-bold text-sm text-white transition-opacity hover:opacity-90"
-            style={{ background: 'linear-gradient(135deg, var(--primary), #8B5CF6)' }}
+            style={{ background: 'var(--primary)' }}
           >
             Get Started Free
           </Link>
@@ -146,7 +146,7 @@ export default function PricingPage() {
           <div
             className="rounded-3xl p-8 relative overflow-hidden"
             style={{
-              background: 'linear-gradient(135deg, var(--primary) 0%, #8B5CF6 100%)',
+              background: 'linear-gradient(135deg, var(--primary) 0%, #8B1A1A 100%)',
             }}
           >
             {/* Popular badge */}
@@ -210,7 +210,7 @@ export default function PricingPage() {
           <Link
             href="/login"
             className="inline-flex items-center gap-2 px-8 py-4 rounded-full font-bold text-white transition-opacity hover:opacity-90"
-            style={{ background: 'linear-gradient(135deg, var(--primary), #8B5CF6)', boxShadow: '0 4px 20px -4px rgba(108,99,255,0.5)' }}
+            style={{ background: 'var(--primary)', boxShadow: '0 4px 20px -4px rgba(108,99,255,0.5)' }}
           >
             Start for Free
           </Link>

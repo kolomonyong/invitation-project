@@ -83,7 +83,7 @@ export default function DashboardHeader({ onOpenSidebar, title = 'Dashboard' }: 
           <div className="flex items-center gap-2 lg:hidden">
             <div
               className="w-8 h-8 rounded-lg flex items-center justify-center"
-              style={{ background: 'linear-gradient(135deg, var(--primary), #A78BFA)' }}
+              style={{ background: 'var(--primary)' }}
             >
               <SparkleIcon className="w-4 h-4 text-white" />
             </div>
