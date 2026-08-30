@@ -11,8 +11,15 @@ const WEDDING_PHOTOS = [
   '/wedding-gallery/wedding-4.jpg',
 ]
 
+const CELEBRATION_PHOTOS = [
+  '/wedding-gallery/celebration-1.jpg',
+  '/wedding-gallery/celebration-2.jpg',
+  '/wedding-gallery/celebration-3.jpg',
+]
+
 export default function LandingPage() {
   const [currentSlide, setCurrentSlide] = useState(0)
+  const [ctaSlide, setCtaSlide] = useState(0)
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
@@ -20,6 +27,13 @@ export default function LandingPage() {
       setCurrentSlide(prev => (prev + 1) % WEDDING_PHOTOS.length)
     }, 4500)
     return () => clearInterval(timer)
+  }, [])
+
+  useEffect(() => {
+    const timer2 = setInterval(() => {
+      setCtaSlide(prev => (prev + 1) % CELEBRATION_PHOTOS.length)
+    }, 4000)
+    return () => clearInterval(timer2)
   }, [])
 
   useEffect(() => {
@@ -191,13 +205,34 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section className="py-24 px-6 text-white text-center" style={{ background: 'linear-gradient(135deg, #5C0A0A, #8B1A1A, #C53030)' }}>
-          <div className="max-w-3xl mx-auto">
-            <h2 className="text-4xl lg:text-5xl font-bold mb-6">Ready to share your special moment?</h2>
-            <p className="text-xl text-white/70 mb-10">Join thousands of others who have created unforgettable digital invitations.</p>
+        <section className="relative py-32 px-6 text-white text-center overflow-hidden">
+          {/* CTA Carousel Background */}
+          {CELEBRATION_PHOTOS.map((src, i) => (
+            <div
+              key={src}
+              className="absolute inset-0 bg-cover bg-center transition-opacity duration-1000"
+              style={{ backgroundImage: `url(${src})`, opacity: i === ctaSlide ? 1 : 0 }}
+            />
+          ))}
+          {/* Dark maroon overlay */}
+          <div className="absolute inset-0 bg-gradient-to-b from-[#5C0A0A]/80 via-[#8B1A1A]/70 to-[#5C0A0A]/80" />
+
+          <div className="relative z-10 max-w-3xl mx-auto">
+            <h2 className="text-4xl lg:text-5xl font-bold mb-6 drop-shadow-xl">Ready to share your special moment?</h2>
+            <p className="text-xl text-white/80 mb-10 drop-shadow-md">Join thousands of others who have created unforgettable digital invitations.</p>
             <Link href="/login" className="inline-flex px-10 py-5 rounded-full text-foreground font-bold text-lg items-center justify-center hover:scale-105 transition-transform bg-white shadow-2xl">
               Start Creating for Free
             </Link>
+            {/* Dots */}
+            <div className="flex gap-2 justify-center mt-10">
+              {CELEBRATION_PHOTOS.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setCtaSlide(i)}
+                  className={`rounded-full transition-all duration-300 ${i === ctaSlide ? 'bg-white w-6 h-2' : 'bg-white/40 w-2 h-2'}`}
+                />
+              ))}
+            </div>
           </div>
         </section>
       </main>
