@@ -10,5 +10,11 @@
       "main": true,
       "restored-first-commit": true
     }
-  }
+  },
+  "crons": [
+    {
+      "path": "/api/cron/keepalive",
+      "schedule": "0 0 */3 * *"
+    }
+  ]
 }
