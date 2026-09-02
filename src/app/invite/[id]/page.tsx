@@ -9,6 +9,7 @@ import WeddingTemplate2 from '@/components/templates/WeddingTemplate2';
 import IslamicWeddingTemplate from '@/components/templates/IslamicWeddingTemplate';
 import NetflixTemplate from '@/components/templates/NetflixTemplate';
 import ElegantWeddingTemplate from '@/components/templates/ElegantWeddingTemplate';
+import AdatJawaTemplate from '@/components/templates/AdatJawaTemplate';
 // --- ^^^ IMPORT OUR NEW TEMPLATE ^^^ ---
 
 export const dynamic = 'force-dynamic';
@@ -100,6 +101,8 @@ export default async function InvitePage(props: Props) {
       return <NetflixTemplate invitationId={id} custom_data={invitationData.custom_data} />;
     case 8:
       return <ElegantWeddingTemplate invitationId={id} custom_data={invitationData.custom_data} />;
+    case 9:
+      return <AdatJawaTemplate invitationId={id} custom_data={invitationData.custom_data} />;
     default:
       // The fallback message for any other template IDs
       return (
