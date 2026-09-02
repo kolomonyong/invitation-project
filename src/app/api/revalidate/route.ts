@@ -1,13 +1,12 @@
-import { revalidateTag } from 'next/cache';
+import { revalidatePath } from 'next/cache';
 import { NextResponse } from 'next/server';
 
 // GET /api/revalidate?tag=templates
-// Purge Next.js cache for a given tag (e.g. after adding a new template in Supabase)
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const tag = searchParams.get('tag') || 'templates';
+// Purge Next.js cache by revalidating the relevant paths
+export async function GET() {
+  // Revalidate the API route that serves templates data
+  revalidatePath('/api/templates');
+  revalidatePath('/dashboard');
 
-  revalidateTag(tag);
-
-  return NextResponse.json({ revalidated: true, tag, timestamp: new Date().toISOString() });
+  return NextResponse.json({ revalidated: true, timestamp: new Date().toISOString() });
 }

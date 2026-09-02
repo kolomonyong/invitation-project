@@ -14,7 +14,7 @@ const getPublicClient = () =>
   )
 
 // ─── Cached Templates ─────────────────────────────────────────────────────────
-// Cache template list for 1 hour — templates rarely change
+// Cache template list for 60 seconds — short enough to pick up new templates quickly
 export const getCachedTemplates = unstable_cache(
   async () => {
     const supabase = getPublicClient()
@@ -27,7 +27,7 @@ export const getCachedTemplates = unstable_cache(
   },
   ['templates-list'],
   {
-    revalidate: 3600, // 1 hour
+    revalidate: 60, // 60 seconds — was 3600 (1 hour)
     tags: ['templates'],
   }
 )
